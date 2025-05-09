@@ -1,0 +1,19 @@
+[
+  {
+    "Name": "Start all projects",
+    "Projects": [
+      {
+        "Path": "measurements-api\\src\\TechChallenge.Measurements.Api\\TechChallenge.Measurements.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "emissions-api\\src\\TechChallenge.Emissions.Api\\TechChallenge.Emissions.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "calculator-api\\src\\TechChallenge.Calculator.Api\\TechChallenge.Calculator.Api.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

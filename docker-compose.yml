@@ -1,0 +1,26 @@
+services:
+  measurements-api:
+    build:
+      dockerfile: ./measurements-api/src/TechChallenge.Measurements.Api/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5153/
+    ports:
+      - "5153:5153"
+  
+  emissions-api:
+    build:
+      dockerfile: ./emissions-api/src/TechChallenge.Emissions.Api/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5139/
+    ports:
+      - "5139:5139"
+  
+  calculator-api:
+    build:
+      dockerfile: ./calculator-api/src/TechChallenge.Calculator.Api/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5164/
+      - MEASUREMENT_URL=http://0.0.0.0:5153/
+      - EMISSION_URL=http://0.0.0.0:5139/
+    ports:
+      - "5164:5164"
