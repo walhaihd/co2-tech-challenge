@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,13 +14,15 @@ namespace TechChallenge.Calculator.Api.Data;
 public class CalculatorRepository : ICalculatorRepository
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IOptions<ApiOptions> _apiSettings;
     private const long IntervalInSeconds = 15 * 60; // 15 minutes to seconds
-    private const int DefaultHttpRequestTimeOutInSeconds = 1;
+    private const int DefaultHttpRequestTimeOutInSeconds = 3;
 
 
-    public CalculatorRepository(IHttpClientFactory httpClientFactory)
+    public CalculatorRepository(IHttpClientFactory httpClientFactory, IOptions<ApiOptions> apiSettings)
     {
         _httpClientFactory = httpClientFactory;
+        _apiSettings = apiSettings;
     }
 
     public async Task<CalculatedTotalEmission> GetCalculatedValue(
@@ -61,7 +64,7 @@ public class CalculatorRepository : ICalculatorRepository
 
     }
 
-    private double CalculateTotalEmission(List<Measurement> measurements, List<Emission> emissions)
+    private static double CalculateTotalEmission(List<Measurement> measurements, List<Emission> emissions)
     {
         double totalEmission = 0;
         if (measurements.Count == 0 || emissions.Count == 0)
@@ -112,7 +115,7 @@ public class CalculatorRepository : ICalculatorRepository
             using var client = _httpClientFactory.CreateClient();
             client.Timeout = TimeSpan.FromSeconds(DefaultHttpRequestTimeOutInSeconds);
 
-            var measurementUrl = $"http://localhost:5153/measurements/{userId}?from={from}&to={to}";
+            var measurementUrl = $"{_apiSettings.Value.MeasurementApiUrl}/{userId}?from={from}&to={to}";
             var measurementResponseMessage = await client.GetAsync(measurementUrl);
 
             if (measurementResponseMessage.IsSuccessStatusCode)
@@ -147,7 +150,7 @@ public class CalculatorRepository : ICalculatorRepository
             client.Timeout = TimeSpan.FromSeconds(DefaultHttpRequestTimeOutInSeconds);
 
             var emissionMaxTimestamp = CalculateEmissionMaxTimestamp(to);
-            var emissionUrl = $"http://localhost:5139/emissions?from={from}&to={emissionMaxTimestamp}";
+            var emissionUrl = $"{_apiSettings.Value.EmissionApiUrl}?from={from}&to={emissionMaxTimestamp}";
             var emissionResponseMessage = await client.GetAsync(emissionUrl);
 
             if (emissionResponseMessage.IsSuccessStatusCode)

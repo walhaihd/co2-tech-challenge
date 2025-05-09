@@ -6,6 +6,8 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:5153/
     ports:
       - "5153:5153"
+    networks:
+      - local
   
   emissions-api:
     build:
@@ -14,13 +16,20 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:5139/
     ports:
       - "5139:5139"
+    networks:
+      - local
   
   calculator-api:
     build:
       dockerfile: ./calculator-api/src/TechChallenge.Calculator.Api/Dockerfile
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5164/
-      - MEASUREMENT_URL=http://0.0.0.0:5153/
-      - EMISSION_URL=http://0.0.0.0:5139/
+      - ApiOptions__EmissionApiUrl=http://emissions-api:5139/emissions
+      - ApiOptions__MeasurementApiUrl=http://measurements-api:5153/measurements
     ports:
       - "5164:5164"
+    networks:
+      - local
+networks:
+  local:
+    driver: bridge

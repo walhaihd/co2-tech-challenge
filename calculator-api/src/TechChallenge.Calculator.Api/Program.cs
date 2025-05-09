@@ -4,6 +4,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TechChallenge.Calculator.Api;
@@ -14,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(_ => {});
-
+builder.Services.Configure<ApiOptions>(options => builder.Configuration.GetSection(ApiOptions.SectionName).Bind(options));
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ICalculatorRepository, CalculatorRepository>();
 
